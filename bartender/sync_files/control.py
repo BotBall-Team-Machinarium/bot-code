@@ -80,8 +80,7 @@ def line_follow():
    k.motor(3, r_control)
 
 def main():
-   while True: 
-      # print(line_sense())
+   while True:
       line_follow()
 
 if __name__ == "__main__":

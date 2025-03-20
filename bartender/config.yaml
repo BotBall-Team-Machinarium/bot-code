@@ -1,0 +1,6 @@
+ssh:
+  hostname: 10.68.3.195
+  username: kipr
+  password: botball
+  
+  path: /home/kipr/  # recommended
