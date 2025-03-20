@@ -1,7 +1,7 @@
 #!/usr/bin/python3
-import os, sys
+import os, sys, cv2, numpy as np
 sys.path.append("/usr/lib")
-import kipr as k
+# import kipr as k
 
 # CONSTANTS
 
@@ -79,9 +79,73 @@ def line_follow():
    k.motor(2, l_control)
    k.motor(3, r_control)
 
+def find_color_regions(image, colors, tolerance=300):
+	# Get the middle-most horizontal line
+	height, width, _ = image.shape
+	middle_line = image[height // 2, :, :]
+
+	# Convert predefined colors to NumPy arrays for easy comparison
+	color_arrays = [np.array(color) for color in colors]
+
+	# Scan from right to left
+	selected_color = None
+	color_regions = []
+	start_idx = None
+
+	for x in range(width - 1, -1, -1):
+		pixel = middle_line[x]
+		for color in color_arrays:
+			if np.abs(pixel - color).sum() <= tolerance:
+				if selected_color is None:
+					selected_color = color
+					start_idx = x
+				break
+		else:
+			if selected_color is not None:
+				# End of a color area
+				middle_x = (start_idx + x) // 2
+				color_regions.append((start_idx, selected_color.tolist()))
+				selected_color = None
+				start_idx = None
+
+	return color_regions
+
+def cup_locator():
+	# Define the colors to detect (BGR format)
+	predefined_colors = [
+		[0, 0, 255],  # Red
+		[0, 255, 0],  # Green
+		[255, 0, 0]   # Blue
+	]
+
+	# Capture an image from the webcam
+	cap = cv2.VideoCapture(0)
+	if not cap.isOpened():
+		print("Error: Could not open webcam.")
+		return
+
+	ret, frame = cap.read()
+	cap.release()
+
+	if not ret:
+		print("Error: Could not read frame.")
+		return
+
+	# Process the image
+	color_regions = find_color_regions(frame, predefined_colors)
+
+	# Display results
+	for pos, color in color_regions:
+		print(f"Detected color {color} at x-position: {pos}")
+		frame = cv2.circle(frame, (pos, frame.shape[0] // 2), 10, color, -1)
+
+	# Show the captured frame
+	cv2.imshow("Captured Frame", frame)
+	cv2.waitKey(0)
+	cv2.destroyAllWindows()
+
 def main():
-   while True:
-      line_follow()
+	cup_locator()
 
 if __name__ == "__main__":
    main()
