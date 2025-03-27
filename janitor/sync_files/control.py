@@ -153,10 +153,24 @@ def shovel_ice():
    
    time.sleep(0.5)
    
-   # Third phase: Lifting up the arm and tool with the ice poms
-   for i in range(10):
+   # Third phase: Lifting up the tool with the ice poms
+   for i in range(30):
 
-      k.set_servo_position(TOOL_SERVO, k.get_servo_position(TOOL_SERVO) - 40)
+      k.set_servo_position(TOOL_SERVO, k.get_servo_position(TOOL_SERVO) - 10)
+      
+      time.sleep(0.1)
+   
+   time.sleep(0.5)
+
+   # Fourth phase: lifting the arm up and leveling the tool
+
+   for i in range(50):
+
+      k.set_servo_position(ARM_SERVO, k.get_servo_position(TOOL_SERVO) + 10)
+      
+      time.sleep(0.1)
+
+      k.set_servo_position(TOOL_SERVO, k.get_servo_position(TOOL_SERVO) + 20)
       
       time.sleep(0.1)
 

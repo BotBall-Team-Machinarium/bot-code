@@ -2,9 +2,13 @@
 
 import os, sys, cv2, numpy as np
 sys.path.append("/usr/lib")
-# import kipr as k
+import kipr as k
 
 # CONSTANTS
+LEFT_SENSOR = 0
+RIGHT_SENSOR = 1
+LEFT_MOTOR = 0
+RIGHT_MOTOR = 1
 
 # Brightness normalization thresholds
 WHITE_THRESHOLD = 220
@@ -108,8 +112,8 @@ def line_follow():
 	Returns:
 	  None
 	"""
-	val_l = k.analog(0)
-	val_r = k.analog(1)
+	val_l = k.analog(LEFT_SENSOR)
+	val_r = k.analog(RIGHT_SENSOR)
 
 	norm_l = normalize_brightness(val_l)
 	norm_r = normalize_brightness(val_r)
@@ -122,8 +126,8 @@ def line_follow():
 
 	print(norm_l, norm_r, centerity, influence, l_control, r_control)
 
-	k.motor(2, l_control)
-	k.motor(3, r_control)
+	k.motor(LEFT_MOTOR, l_control)
+	k.motor(RIGHT_MOTOR, r_control)
 
 def show_hsv(event, x, y, flags, param):
 	"""Displays HSV values when clicking on the frame."""
@@ -264,11 +268,14 @@ def find_cups(frame: np.ndarray, masks: dict[str, cv2.typing.MatLike], contours:
 	return correct_cup, [(color, box) for cnt, color, box in sorted_contours]
 
 def main():
-	frame, masks, contours = detect_contours()
+	# frame, masks, contours = detect_contours()
 
-	correct_cup, sorted_contours = find_cups(frame, masks, contours)
+	# correct_cup, sorted_contours = find_cups(frame, masks, contours)
 
-	print(correct_cup, sorted_contours)
+	# print(correct_cup, sorted_contours)
+
+	while True:
+		line_follow()
 
 if __name__ == "__main__":
 	main()
