@@ -14,7 +14,7 @@ BLACK_THRESHOLD = 3000
 MOTOR_STRENGTH = 100
 
 # Cam constants
-CAM_INDEX = 1
+CAM_INDEX = 0
 # Minimum contour area to avoid noise
 MIN_AREA = 1000
 # Colors to seach for in hsv
