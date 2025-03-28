@@ -10,7 +10,7 @@ LEFT_MOTOR = 0
 RIGHT_MOTOR = 1
 # At 0 the arm is horizontal, at 1100 it is vertical, at 1700 it is touching the controller
 ARM_SERVO = 0
-# At 1550 the tool is horizontal, if the arm is vertical (tool is normal to arm at 1500)
+# At 1550 the tool is horizontal, if the arm is vertical (tool is normal to arm at 1550)
 TOOL_SERVO = 1
 
 # Brightness normalization thresholds
@@ -40,7 +40,7 @@ def normalize_brightness(brightness: int) -> float:
    else:
       return (brightness - WHITE_THRESHOLD) / (BLACK_THRESHOLD - WHITE_THRESHOLD)
 
-def line_sense(brightness_left: float, brightness_right: float) -> float:
+def line_sense(brightness_left: float, brightness_right: float, normalize: bool = True) -> float:
    """
    Compute a measure of the "centerity" of the line by comparing the brightnesses
    of the left and right sensors.
@@ -60,6 +60,9 @@ def line_sense(brightness_left: float, brightness_right: float) -> float:
             __    /  \__
               \__/
    """
+   if normalize:
+      brightness_left = normalize_brightness(brightness_left)
+      brightness_right = normalize_brightness(brightness_right)
    if brightness_left > brightness_right:
       centerity = -(brightness_left + brightness_right)
    elif brightness_left < brightness_right:
@@ -87,10 +90,6 @@ def line_follow():
    k.motor(LEFT_MOTOR, l_control)
    k.motor(RIGHT_MOTOR, r_control)
 
-def straighten():
-   k.set_servo_position(ARM_SERVO, 1100)
-   k.set_servo_position(TOOL_SERVO, 1550)
-
 def shovel_ice():
    # It is assumed that this script starts when the bot is in front of the ice
 
@@ -99,7 +98,7 @@ def shovel_ice():
    k.set_servo_position(ARM_SERVO, 1100)
    k.set_servo_position(TOOL_SERVO, 1500)
 
-   time.sleep(1)
+   time.sleep(0.1)
 
    k.set_servo_position(ARM_SERVO, 500)
    k.set_servo_position(TOOL_SERVO, 1650)
@@ -111,13 +110,13 @@ def shovel_ice():
 
       k.set_servo_position(TOOL_SERVO, k.get_servo_position(TOOL_SERVO) - 50)
 
-      time.sleep(0.1)
+      # time.sleep(0.1)
 
       k.set_servo_position(ARM_SERVO, k.get_servo_position(ARM_SERVO) - 20)
 
-      time.sleep(0.1)
+      # time.sleep(0.1)
 
-   time.sleep(0.5)
+   time.sleep(0.1)
    
    # Second phase: Driveing backwards and angling the tool out
 
@@ -131,11 +130,11 @@ def shovel_ice():
 
       k.set_servo_position(TOOL_SERVO, k.get_servo_position(TOOL_SERVO) - 60)
 
-      time.sleep(0.1)
+      # time.sleep(0.1)
 
       k.set_servo_position(ARM_SERVO, k.get_servo_position(ARM_SERVO) - 30)
 
-      time.sleep(0.1)
+      time.sleep(0.01)
    
    k.motor(LEFT_MOTOR, 30)
    k.motor(RIGHT_MOTOR, 30)
@@ -151,31 +150,105 @@ def shovel_ice():
    k.motor(LEFT_MOTOR, 0)
    k.motor(RIGHT_MOTOR, 0)
    
-   time.sleep(0.5)
+   time.sleep(0.1)
    
    # Third phase: Lifting up the tool with the ice poms
-   for i in range(30):
+   for i in range(40):
 
       k.set_servo_position(TOOL_SERVO, k.get_servo_position(TOOL_SERVO) - 10)
       
-      time.sleep(0.1)
+      time.sleep(0.01)
    
-   time.sleep(0.5)
+   time.sleep(5)
+
+   k.motor(LEFT_MOTOR, 50)
+   k.motor(RIGHT_MOTOR, 50)
 
    # Fourth phase: lifting the arm up and leveling the tool
 
-   for i in range(50):
+   for i in range(20):
 
-      k.set_servo_position(ARM_SERVO, k.get_servo_position(TOOL_SERVO) + 10)
+      k.set_servo_position(ARM_SERVO, k.get_servo_position(ARM_SERVO) + 50)
       
-      time.sleep(0.1)
+      # time.sleep(0.1)
 
-      k.set_servo_position(TOOL_SERVO, k.get_servo_position(TOOL_SERVO) + 20)
+      k.set_servo_position(TOOL_SERVO, k.get_servo_position(TOOL_SERVO) + 40)
       
-      time.sleep(0.1)
+      # time.sleep(0.1)
+
+      time.sleep(0.05)
+   
+   k.motor(LEFT_MOTOR, 0)
+   k.motor(RIGHT_MOTOR, 0)
+
+def start():
+   def wait_for_line():
+      if normalize_brightness(k.analog(LEFT_SENSOR)) > 0 or normalize_brightness(k.analog(RIGHT_SENSOR)) > 0:
+         while normalize_brightness(k.analog(LEFT_SENSOR)) > 0 or normalize_brightness(k.analog(RIGHT_SENSOR)) > 0:
+            time.sleep(0.01)
+      while normalize_brightness(k.analog(LEFT_SENSOR)) == 0 or normalize_brightness(k.analog(RIGHT_SENSOR)) == 0:
+         time.sleep(0.01)
+   
+   # A function for getting the robot out of the starting position and to the ice poms
+   k.enable_servos()
+   k.set_servo_position(ARM_SERVO, 1100)
+   k.set_servo_position(TOOL_SERVO, 1550)
+
+   k.motor(LEFT_MOTOR, -100)
+   k.motor(RIGHT_MOTOR, -100)
+   time.sleep(0.3)
+   k.motor(LEFT_MOTOR, 0)
+   k.motor(RIGHT_MOTOR, 0)
+
+   k.motor(LEFT_MOTOR, 100)
+   k.motor(RIGHT_MOTOR, -100)
+   time.sleep(0.8)
+   k.motor(LEFT_MOTOR, 0)
+   k.motor(RIGHT_MOTOR, 0)
+
+   # Move to first line
+   k.motor(LEFT_MOTOR, -96)
+   k.motor(RIGHT_MOTOR, -100)
+   wait_for_line()
+   k.motor(LEFT_MOTOR, 0)
+   k.motor(RIGHT_MOTOR, 0)
+
+   k.motor(LEFT_MOTOR, -100)
+   k.motor(RIGHT_MOTOR, 100)
+   time.sleep(1.4)
+   k.motor(LEFT_MOTOR, 0)
+   k.motor(RIGHT_MOTOR, 0)
+
+   # Move to second line
+   k.motor(LEFT_MOTOR, 100)
+   k.motor(RIGHT_MOTOR, 100)
+   wait_for_line()
+   k.motor(LEFT_MOTOR, 0)
+   k.motor(RIGHT_MOTOR, 0)
+
+   # Drive to ice poms
+   k.motor(LEFT_MOTOR, 100)
+   k.motor(RIGHT_MOTOR, 100)
+   time.sleep(3)
+   k.motor(LEFT_MOTOR, 0)
+   k.motor(RIGHT_MOTOR, 0)
+
+   # Turn towards ice
+   k.motor(LEFT_MOTOR, 100)
+   k.motor(RIGHT_MOTOR, -100)
+   time.sleep(0.8)
+   k.motor(LEFT_MOTOR, 0)
+   k.motor(RIGHT_MOTOR, 0)
+
+   # Hug wall to get straight
+   k.motor(LEFT_MOTOR, 75)
+   k.motor(RIGHT_MOTOR, 100)
+   time.sleep(1)
+   k.motor(LEFT_MOTOR, 0)
+   k.motor(RIGHT_MOTOR, 0)
 
 def main():
-   # straighten()
+   start()
    shovel_ice()
 
 if __name__ == "__main__":
