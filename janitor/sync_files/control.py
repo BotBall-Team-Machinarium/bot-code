@@ -122,14 +122,14 @@ def shovel_ice():
    k.set_servo_position(ARM_SERVO, 1100)
    k.set_servo_position(TOOL_SERVO, 1500)
 
-   time.sleep(5)
+   time.sleep(0.5)
 
    # First phase: Sinking arm and tool into the ice poms  
 
    k.set_servo_position(ARM_SERVO, 700)
    k.set_servo_position(TOOL_SERVO, 1750)
 
-   time.sleep(5)
+   time.sleep(0.5)
 
    for i in range(10):
 
@@ -139,7 +139,7 @@ def shovel_ice():
 
       time.sleep(0.1)
 
-   time.sleep(5)
+   time.sleep(0.5)
    
    # Second phase: Driveing backwards and angling the tool out
 
@@ -168,7 +168,7 @@ def shovel_ice():
    k.motor(LEFT_MOTOR, 0)
    k.motor(RIGHT_MOTOR, 0)
    
-   time.sleep(5)
+   time.sleep(0.5)
    
    # Third phase: Lifting up the tool with the ice poms
    for i in range(30):
@@ -177,7 +177,7 @@ def shovel_ice():
       
       time.sleep(0.01)
    
-   time.sleep(5)
+   time.sleep(0.5)
 
    # Fourth phase: lifting the arm up and leveling the tool
    for i in range(40):
@@ -222,7 +222,7 @@ def wait_for_line():
    while normalize_brightness(k.analog(LEFT_SENSOR)) == 0 or normalize_brightness(k.analog(RIGHT_SENSOR)) == 0:
       time.sleep(0.01)
 
-def start():
+def drive_to_ice():
    """
    Runs the entire script, which consists of:
 
@@ -241,8 +241,8 @@ def start():
    """   
    # A function for getting the robot out of the starting position and to the ice poms
    k.enable_servos()
-   k.set_servo_position(ARM_SERVO, 1100)
-   k.set_servo_position(TOOL_SERVO, 1550)
+   k.set_servo_position(ARM_SERVO, 1700)
+   k.set_servo_position(TOOL_SERVO, 1800)
 
    k.motor(LEFT_MOTOR, -100)
    k.motor(RIGHT_MOTOR, -100)
@@ -383,13 +383,13 @@ def drive_to_beverages():
    # Spin around to face beverage station with fork
    k.motor(RIGHT_MOTOR, 100)
    k.motor(LEFT_MOTOR, -100)
-   time.sleep(1)
+   time.sleep(0.95)
    k.motor(RIGHT_MOTOR, 0)
    k.motor(LEFT_MOTOR, 0)
 
    # Drive to beverage station and hug wall to straighten
    k.motor(LEFT_MOTOR, -100)
-   k.motor(RIGHT_MOTOR, -70)
+   k.motor(RIGHT_MOTOR, -56)
    time.sleep(2.5)
    k.motor(LEFT_MOTOR, 0)
    k.motor(RIGHT_MOTOR, 0)
