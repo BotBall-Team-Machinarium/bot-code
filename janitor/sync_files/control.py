@@ -159,6 +159,7 @@ def shovel_ice():
 
       time.sleep(0.1)
 
+
    time.sleep(0.1)
    
    k.motor(LEFT_MOTOR, -30)
@@ -196,6 +197,10 @@ def shovel_ice():
       time.sleep(0.1)
       k.motor(LEFT_MOTOR, 0)
       k.motor(RIGHT_MOTOR, 0)
+   
+   # Finish: Get shovel into best position for transport
+   k.set_servo_position(ARM_SERVO, 1100)
+   k.set_servo_position(TOOL_SERVO, 900)
    
    # Finish: Get shovel into best position for transport
    k.set_servo_position(ARM_SERVO, 1100)
@@ -403,6 +408,13 @@ def ice_cups():
       time.sleep(0.1)
 
 def main():
+   # start()
+   # shovel_ice()
+   # drive_to_bottles()
+   # grab_bottles()
+   # drive_to_beverages()
+   # drop_bottles()
+   # drive_to_cups()
    # start()
    # shovel_ice()
    # drive_to_bottles()
