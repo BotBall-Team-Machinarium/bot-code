@@ -3,6 +3,7 @@ sys.path.append("/usr/lib")
 import kipr as k
 import time
 import threading
+import utils
 
 k.enable_servos()
 
@@ -25,29 +26,36 @@ def dead_end_test() -> None:
 def move(left: bool, right: bool, velocity: float, move_time: float) -> None:
     print(f"Left: {left}, Right: {right}, Velocity: {velocity}, Time: {move_time}")
     if left:
-        k.motor(0, velocity)
+        k.motor(3, velocity)
     if right:
-        k.motor(1, -velocity)
+        k.motor(2, -velocity)
     time.sleep(move_time)
-    k.motor(0, 0)
-    k.motor(1, 0)
+    k.motor(3, 0)
+    k.motor(2, 0)
 
 def wind(up: bool, speed: float) -> None:
     calibration: float = 1.0
     if up:
-        k.motor(2, speed)
+        k.motor(1, speed)
     else:
-        k.motor(2, -speed)
+        k.motor(1, -speed)
 
     time.sleep(8 * calibration)
     k.motor(2, 0)
 
-print("I'm in.")
-for i in range(5):
-    wind(True, 100)
-    wind(False, 100)
+def wind_test() -> None:
+    for i in range(5):
+        wind(True, 100)
+        wind(False, 100)
 
+k.enable_servos()
 # delta_time_move(1, 1600, 0.001)  # 1600 (magazine on ground)
-# delta_time_move(2, 1000, 0.01)  # 1000 (closed), 0 (max open ~85°)
-# move(True, True, 100, 4)
-# k.disable_servos()
+
+# Collect Drinkpods
+# move(True, True, 50, 3.25)
+# move(True, True, -100, 3)
+
+# wind(True, 100)
+
+# move(True, True, 100, 15)
+k.set_servo_position(1, 750)  # Leveled Position when winded up
