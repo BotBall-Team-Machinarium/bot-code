@@ -12,6 +12,8 @@ RIGHT_MOTOR = 1
 ARM_SERVO = 0
 # At 1550 the tool is horizontal, if the arm is vertical (tool is normal to arm at 1550)
 TOOL_SERVO = 1
+# TODO: Initialize fork servo
+FORK_SERVO = 3
 
 # Brightness normalization thresholds
 WHITE_THRESHOLD = 220
@@ -76,16 +78,11 @@ def line_follow():
    val_l = k.analog(LEFT_SENSOR)
    val_r = k.analog(RIGHT_SENSOR)
 
-   norm_l = normalize_brightness(val_l)
-   norm_r = normalize_brightness(val_r)
-
-   centerity = line_sense(norm_l, norm_r, normalize=False)
+   centerity = line_sense(val_l, val_r, normalize=True)
 
    influence = max(min(centerity, 1), -1)
    l_control = round((1 + influence) * MOTOR_STRENGTH)
    r_control = round((1 - influence) * MOTOR_STRENGTH)
-
-   print(norm_l, norm_r, centerity, influence, l_control, r_control)
 
    k.motor(LEFT_MOTOR, l_control)
    k.motor(RIGHT_MOTOR, r_control)
@@ -125,14 +122,14 @@ def shovel_ice():
    k.set_servo_position(ARM_SERVO, 1100)
    k.set_servo_position(TOOL_SERVO, 1500)
 
-   time.sleep(0.5)
+   time.sleep(5)
 
    # First phase: Sinking arm and tool into the ice poms  
 
    k.set_servo_position(ARM_SERVO, 700)
    k.set_servo_position(TOOL_SERVO, 1750)
 
-   time.sleep(0.5)
+   time.sleep(5)
 
    for i in range(10):
 
@@ -140,7 +137,9 @@ def shovel_ice():
 
       k.set_servo_position(ARM_SERVO, k.get_servo_position(ARM_SERVO) - 30)
 
-   time.sleep(0.5)
+      time.sleep(0.1)
+
+   time.sleep(5)
    
    # Second phase: Driveing backwards and angling the tool out
 
@@ -158,13 +157,13 @@ def shovel_ice():
 
       k.set_servo_position(ARM_SERVO, k.get_servo_position(ARM_SERVO) - 40)
 
-      # time.sleep(0.1)
+      time.sleep(0.1)
    
-   k.motor(LEFT_MOTOR, 30)
-   k.motor(RIGHT_MOTOR, 30)
-   time.sleep(0.5)
-   k.motor(LEFT_MOTOR, 0)
-   k.motor(RIGHT_MOTOR, 0)
+   # k.motor(LEFT_MOTOR, 30)
+   # k.motor(RIGHT_MOTOR, 30)
+   # time.sleep(0.5)
+   # k.motor(LEFT_MOTOR, 0)
+   # k.motor(RIGHT_MOTOR, 0)
 
    time.sleep(0.1)
    
@@ -174,7 +173,7 @@ def shovel_ice():
    k.motor(LEFT_MOTOR, 0)
    k.motor(RIGHT_MOTOR, 0)
    
-   time.sleep(0.5)
+   time.sleep(5)
    
    # Third phase: Lifting up the tool with the ice poms
    for i in range(30):
@@ -183,24 +182,23 @@ def shovel_ice():
       
       time.sleep(0.01)
    
-   time.sleep(0.5)
+   time.sleep(5)
 
    # Fourth phase: lifting the arm up and leveling the tool
+   for i in range(40):
 
-   for i in range(20):
-
-      k.set_servo_position(ARM_SERVO, k.get_servo_position(ARM_SERVO) + 50)
+      k.set_servo_position(ARM_SERVO, k.get_servo_position(ARM_SERVO) + 25)
       
       # time.sleep(0.1)
 
-      k.set_servo_position(TOOL_SERVO, k.get_servo_position(TOOL_SERVO) + 40)
+      k.set_servo_position(TOOL_SERVO, k.get_servo_position(TOOL_SERVO) + 20)
       
       # time.sleep(0.1)
 
-      time.sleep(0.05)
+      time.sleep(0.025)
 
-      k.motor(LEFT_MOTOR, 30)
-      k.motor(RIGHT_MOTOR, 30)
+      k.motor(LEFT_MOTOR, 15)
+      k.motor(RIGHT_MOTOR, 15)
       time.sleep(0.1)
       k.motor(LEFT_MOTOR, 0)
       k.motor(RIGHT_MOTOR, 0)
@@ -278,7 +276,7 @@ def start():
    # Drive to ice poms
    k.motor(LEFT_MOTOR, 100)
    k.motor(RIGHT_MOTOR, 100)
-   time.sleep(2.8)
+   time.sleep(2.9)
    k.motor(LEFT_MOTOR, 0)
    k.motor(RIGHT_MOTOR, 0)
 
@@ -319,12 +317,12 @@ def drive_to_bottles():
    k.motor(LEFT_MOTOR, 0)
    k.motor(RIGHT_MOTOR, 0)
 
-   # # Turn to face along middle line
-   # k.motor(LEFT_MOTOR, -100)
-   # k.motor(RIGHT_MOTOR, 100)
-   # time.sleep(0.6)
-   # k.motor(LEFT_MOTOR, 0)
-   # k.motor(RIGHT_MOTOR, 0)
+   # Turn to face along middle line
+   k.motor(LEFT_MOTOR, -100)
+   k.motor(RIGHT_MOTOR, 100)
+   time.sleep(0.6)
+   k.motor(LEFT_MOTOR, 0)
+   k.motor(RIGHT_MOTOR, 0)
 
    # Follow middle line to center cross
    while True:
@@ -337,18 +335,24 @@ def drive_to_bottles():
       line_follow()
       if normalize_brightness(k.analog(LEFT_SENSOR)) == 1 and normalize_brightness(k.analog(RIGHT_SENSOR)) == 1:
          break
+   
+   # Gradually drive backwards
+   for i in range(10):
+      k.motor(LEFT_MOTOR, i * -10)
+      k.motor(RIGHT_MOTOR, i * -10)
+      time.sleep(0.05)
 
    # Backtrack to the bottles
    k.motor(LEFT_MOTOR, -100)
    k.motor(RIGHT_MOTOR, -100)
-   time.sleep(1)
+   time.sleep(0.85)
    k.motor(LEFT_MOTOR, 0)
    k.motor(RIGHT_MOTOR, 0)
 
    # Face back to bottles
    k.motor(LEFT_MOTOR, 100)
    k.motor(RIGHT_MOTOR, -100)
-   time.sleep(0.8)
+   time.sleep(0.75)
    k.motor(LEFT_MOTOR, 0)
    k.motor(RIGHT_MOTOR, 0)
 
@@ -360,16 +364,41 @@ def drive_to_bottles():
    k.motor(RIGHT_MOTOR, 0)
 
    # Drive backwards towards bottles
-   k.motor(LEFT_MOTOR, -100)
+   k.motor(LEFT_MOTOR, -90)
    k.motor(RIGHT_MOTOR, -100)
    time.sleep(2)
    k.motor(LEFT_MOTOR, 0)
    k.motor(RIGHT_MOTOR, 0)
 
+def grab_bottles():
+   # TODO: Implement bottle lifting with fork
+   ...
+
+def drive_to_beverages():
+   # TODO: Implement driving to beverages
+   ...
+
+def drop_bottles():
+   # TODO: Implement putting bottles into beverage station
+   ...
+
+def drive_to_cups():
+   # TODO: Implement driving to cups (needs cooperation with bartender)
+   ...
+
+def ice_cups():
+   # TODO: Implement dropping ice poms into cups
+   ...
+
 def main():
    start()
    shovel_ice()
    drive_to_bottles()
+   grab_bottles()
+   drive_to_beverages()
+   drop_bottles()
+   drive_to_cups()
+   ice_cups()
 
 if __name__ == "__main__":
    main()
