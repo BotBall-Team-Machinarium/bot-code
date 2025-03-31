@@ -158,12 +158,6 @@ def shovel_ice():
       k.set_servo_position(ARM_SERVO, k.get_servo_position(ARM_SERVO) - 40)
 
       time.sleep(0.1)
-   
-   # k.motor(LEFT_MOTOR, 30)
-   # k.motor(RIGHT_MOTOR, 30)
-   # time.sleep(0.5)
-   # k.motor(LEFT_MOTOR, 0)
-   # k.motor(RIGHT_MOTOR, 0)
 
    time.sleep(0.1)
    
@@ -202,6 +196,10 @@ def shovel_ice():
       time.sleep(0.1)
       k.motor(LEFT_MOTOR, 0)
       k.motor(RIGHT_MOTOR, 0)
+   
+   # Finish: Get shovel into best position for transport
+   k.set_servo_position(ARM_SERVO, 1100)
+   k.set_servo_position(TOOL_SERVO, 900)
 
 def wait_for_line():
    """
@@ -387,17 +385,31 @@ def drive_to_cups():
    ...
 
 def ice_cups():
-   # TODO: Implement dropping ice poms into cups
-   ...
+   # It is assumed that this script starts when the cups are directly infront of the shovel, standing next to each other
+   # It is also assumed that the arm and tool servos are still in the positions from the ice shoveling (1100 and 900)
+
+   # Lowering shovel to the cups
+   k.set_servo_position(TOOL_SERVO, 1450)
+
+   # Shake to get ice poms out of the shovel
+   for i in range(100):
+      k.set_servo_position(ARM_SERVO, k.get_servo_position(ARM_SERVO) + 50)
+      # k.motor(LEFT_MOTOR, -50)
+      # k.motor(RIGHT_MOTOR, -50)
+      time.sleep(0.1)
+      k.set_servo_position(ARM_SERVO, k.get_servo_position(ARM_SERVO) - 50)
+      # k.motor(LEFT_MOTOR, 50)
+      # k.motor(RIGHT_MOTOR, 50)
+      time.sleep(0.1)
 
 def main():
-   start()
-   shovel_ice()
-   drive_to_bottles()
-   grab_bottles()
-   drive_to_beverages()
-   drop_bottles()
-   drive_to_cups()
+   # start()
+   # shovel_ice()
+   # drive_to_bottles()
+   # grab_bottles()
+   # drive_to_beverages()
+   # drop_bottles()
+   # drive_to_cups()
    ice_cups()
 
 if __name__ == "__main__":
