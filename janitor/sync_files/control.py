@@ -402,6 +402,36 @@ def drive_to_cups():
    # TODO: Implement driving to cups (needs cooperation with bartender)
    ...
 
+   # It is assumed that this script starts right after dropping the bottles, with the assistant hugging the beverage station wall
+
+   # Distance from wall
+   k.motor(LEFT_MOTOR, 100)
+   k.motor(RIGHT_MOTOR, 100)
+   time.sleep(0.5)
+   k.motor(LEFT_MOTOR, 0)
+   k.motor(RIGHT_MOTOR, 0)
+
+   # Turn towards place where cups will be (brought by the bartender)
+   k.motor(LEFT_MOTOR, -100)
+   k.motor(RIGHT_MOTOR, 100)
+   time.sleep(0.4)
+   k.motor(LEFT_MOTOR, 0)
+   k.motor(RIGHT_MOTOR, 0)
+
+   # Drive to cups
+   k.motor(LEFT_MOTOR, 100)
+   k.motor(RIGHT_MOTOR, 100)
+   time.sleep(4)
+   k.motor(LEFT_MOTOR, 0)
+   k.motor(RIGHT_MOTOR, 0)
+
+   # Turn to face the cups
+   k.motor(LEFT_MOTOR, -100)
+   k.motor(RIGHT_MOTOR, 100)
+   time.sleep(0.25)
+   k.motor(LEFT_MOTOR, 0)
+   k.motor(RIGHT_MOTOR, 0)
+
 def ice_cups():
    # It is assumed that this script starts when the cups are directly infront of the shovel, standing next to each other
    # It is also assumed that the arm and tool servos are still in the positions from the ice shoveling (1100 and 900)
@@ -425,9 +455,9 @@ def main():
    # shovel_ice()
    # drive_to_bottles()
    # grab_bottles()
-   drive_to_beverages()
+   # drive_to_beverages()
    # drop_bottles()
-   # drive_to_cups()
+   drive_to_cups()
    # ice_cups()
 
 if __name__ == "__main__":
