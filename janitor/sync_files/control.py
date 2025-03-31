@@ -378,8 +378,21 @@ def grab_bottles():
    ...
 
 def drive_to_beverages():
-   # TODO: Implement driving to beverages
-   ...
+   # It is assumed this script begins right after lifting the bottles up
+
+   # Spin around to face beverage station with fork
+   k.motor(RIGHT_MOTOR, 100)
+   k.motor(LEFT_MOTOR, -100)
+   time.sleep(1)
+   k.motor(RIGHT_MOTOR, 0)
+   k.motor(LEFT_MOTOR, 0)
+
+   # Drive to beverage station and hug wall to straighten
+   k.motor(LEFT_MOTOR, -100)
+   k.motor(RIGHT_MOTOR, -70)
+   time.sleep(2.5)
+   k.motor(LEFT_MOTOR, 0)
+   k.motor(RIGHT_MOTOR, 0)
 
 def drop_bottles():
    # TODO: Implement putting bottles into beverage station
@@ -412,17 +425,10 @@ def main():
    # shovel_ice()
    # drive_to_bottles()
    # grab_bottles()
-   # drive_to_beverages()
+   drive_to_beverages()
    # drop_bottles()
    # drive_to_cups()
-   # start()
-   # shovel_ice()
-   # drive_to_bottles()
-   # grab_bottles()
-   # drive_to_beverages()
-   # drop_bottles()
-   # drive_to_cups()
-   ice_cups()
+   # ice_cups()
 
 if __name__ == "__main__":
    main()
