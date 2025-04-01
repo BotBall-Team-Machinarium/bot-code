@@ -12,8 +12,8 @@ RIGHT_MOTOR = 1
 ARM_SERVO = 0
 # At 1550 the tool is horizontal, if the arm is vertical (tool is normal to arm at 1550)
 TOOL_SERVO = 1
-# TODO: Initialize fork servo
-FORK_SERVO = 3
+# At 550 the fork is horizontal, at 1550 it is vertical, at 1950 it touches the controller
+FORK_SERVO = 2
 
 # Brightness normalization thresholds
 WHITE_THRESHOLD = 220
@@ -457,7 +457,7 @@ def main():
    # grab_bottles()
    # drive_to_beverages()
    # drop_bottles()
-   drive_to_cups()
+   # drive_to_cups()
    # ice_cups()
 
 if __name__ == "__main__":
