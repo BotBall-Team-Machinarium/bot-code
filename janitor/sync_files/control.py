@@ -12,7 +12,7 @@ RIGHT_MOTOR = 1
 ARM_SERVO = 0
 # At 1550 the tool is horizontal, if the arm is vertical (tool is normal to arm at 1550)
 TOOL_SERVO = 1
-# At 550 the fork is horizontal, at 1550 it is vertical, at 1950 it touches the controller
+# At 500 the fork is horizontal, at 1500 it is vertical, at 1900 it touches the controller
 FORK_SERVO = 2
 
 # Brightness normalization thresholds
@@ -240,9 +240,12 @@ def drive_to_ice():
       None
    """   
    # A function for getting the robot out of the starting position and to the ice poms
+
+   # Initial positions
    k.enable_servos()
    k.set_servo_position(ARM_SERVO, 1700)
    k.set_servo_position(TOOL_SERVO, 1800)
+   k.set_servo_position(FORK_SERVO, 1200)
 
    k.motor(LEFT_MOTOR, -100)
    k.motor(RIGHT_MOTOR, -100)
@@ -366,16 +369,28 @@ def drive_to_bottles():
    k.motor(LEFT_MOTOR, 0)
    k.motor(RIGHT_MOTOR, 0)
 
-   # Drive backwards towards bottles
-   k.motor(LEFT_MOTOR, -90)
-   k.motor(RIGHT_MOTOR, -100)
+def grab_bottles():
+   # It is assumed that this routine starts when the robot is in line with the bottles, hugging the opposing wall, with the fork up in a resting position
+   
+   # Angle fork
+   k.set_servo_position(FORK_SERVO, 480)
+
+   # Drive backwards towards bottles until middle line
+   k.motor(LEFT_MOTOR, -29)
+   k.motor(RIGHT_MOTOR, -30)
+   wait_for_line()
+   k.motor(LEFT_MOTOR, 0)
+   k.motor(RIGHT_MOTOR, 0)
+
+   # Drive fork into bottle slowly
+   k.motor(LEFT_MOTOR, -29)
+   k.motor(RIGHT_MOTOR, -30)
    time.sleep(2)
    k.motor(LEFT_MOTOR, 0)
    k.motor(RIGHT_MOTOR, 0)
 
-def grab_bottles():
-   # TODO: Implement bottle lifting with fork
-   ...
+   # Lift fork with bottles
+   k.set_servo_position(FORK_SERVO, 1500)
 
 def drive_to_beverages():
    # It is assumed this script begins right after lifting the bottles up
@@ -395,8 +410,21 @@ def drive_to_beverages():
    k.motor(RIGHT_MOTOR, 0)
 
 def drop_bottles():
-   # TODO: Implement putting bottles into beverage station
-   ...
+   # It is assumed that this routine starts with the robot hugging the beverage station, with the fork with the bottles vertical
+
+   # Put down bottles
+   k.set_servo_position(FORK_SERVO, 500)
+   time.sleep(0.5)
+
+   # Drive away from beverage station to middle line
+   k.motor(LEFT_MOTOR, 100)
+   k.motor(RIGHT_MOTOR, 100)
+   time.sleep(1)
+   k.motor(LEFT_MOTOR, 0)
+   k.motor(RIGHT_MOTOR, 0)
+   
+   # Put fork away
+   k.set_servo_position(FORK_SERVO, 1500)
 
 def drive_to_cups():
    # TODO: Implement driving to cups (needs cooperation with bartender)
@@ -451,12 +479,12 @@ def ice_cups():
       time.sleep(0.1)
 
 def main():
-   # start()
+   # drive_to_ice()
    # shovel_ice()
    # drive_to_bottles()
    # grab_bottles()
    # drive_to_beverages()
-   # drop_bottles()
+   drop_bottles()
    # drive_to_cups()
    # ice_cups()
 
