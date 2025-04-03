@@ -477,6 +477,13 @@ def ice_cups():
    # It is assumed that this script starts when the cups are directly infront of the shovel, standing next to each other
    # It is also assumed that the arm and tool servos are still in the positions from the ice shoveling (1100 and 900)
 
+   # Drive backwards so shovel is ontop the cups
+   k.motor(LEFT_MOTOR, -100)
+   k.motor(RIGHT_MOTOR, -100)
+   time.sleep(0.5)
+   k.motor(LEFT_MOTOR, 0)
+   k.motor(RIGHT_MOTOR, 0)
+
    # Lower shovel to cups
    for i in range(10):
       k.set_servo_position(ARM_SERVO, 1650 - i * 60)
@@ -690,15 +697,6 @@ def ice_to_beverages():
 
 def main():
    k.enable_servos()
-
-   # start_to_ice()
-   # shovel_ice()
-   # ice_to_bottles()
-   # grab_bottles()
-   # bottles_to_beverages()
-   # drop_bottles()
-   # beverages_to_cups()
-   # ice_cups()
 
    # start_to_bottles()
    # grab_bottles()
