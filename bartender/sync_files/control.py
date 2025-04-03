@@ -2,7 +2,6 @@ import sys
 sys.path.append("/usr/lib")
 import kipr as k
 import time
-import threading
 import utils
 
 k.enable_servos()
@@ -30,8 +29,8 @@ def move(left: bool, right: bool, velocity: float, move_time: float) -> None:
     if right:
         k.motor(2, -velocity)
     time.sleep(move_time)
-    k.motor(3, 0)
-    k.motor(2, 0)
+    k.off(3)
+    k.off(2)
 
 def wind(up: bool, speed: float) -> None:
     calibration: float = 1.0
@@ -56,12 +55,12 @@ def shake_it_baby() -> None:
         time.sleep(0.1)
 
 def starting_sequence(motor_down_wind: float = 3) -> None:
-    delta_time_move(1, 850, 0.0005)  # make magazine beautifully positioned
+    delta_time_move(1, 830, 0.0005)  # make magazine beautifully positioned
     k.motor(0, -10)
     time.sleep(2.9)
     k.off(0)
     k.motor(1, 100)
-    time.sleep(motor_down_wind)
+    time.sleep(motor_down_wind - 1)
     k.off(1)
 
 def fill_cups_test() -> None:
@@ -79,10 +78,73 @@ def grab_cups(correct_cup) -> None:
     # if targeted cup is index 2 take 0 as secondary cup
     # if targeted cup is index 1 take 0 as secondary cup
     if correct_cup == 1 or correct_cup == 2:
-        for i in range(5):
-            move(True, True, 100, 1)
-            move(False, False, 0, 0.2)
-        move(True, True, 100, 3)
+        # turn sligthy to the left
+        move(False, True, 50, 0.5)
+        # move forward
+        move(True, True, 100, 1.7)
+        time.sleep(0.2)
+        # close grabber
+        delta_time_move(0, 1560, 0.001)
+        # back up
+        move(True, True, -100, 1.9)
+        # wind up to very high position
+        k.motor(1, -100)
+        time.sleep(MOTOR_WIND_LENGTH + 2)
+        k.off(1)
+        # level magazines
+        delta_time_move(1, 350, 0.001)
+        # rotate to the right
+        move(True, False, 100, 4)
+        time.sleep(0.1)
+        # move forward
+        move(True, True, 100, 0.5)
+        time.sleep(0.1)
+        # wind down to place cups
+        k.motor(1, 100)
+        time.sleep(MOTOR_WIND_LENGTH - 0.25)
+        k.off(1)
+        # level magazine
+        delta_time_move(1, 450, 0.001)
+        time.sleep(0.1)
+        # open grabbers
+        delta_time_move(0, 700, 0.001)
+        # wind up
+        k.motor(1, -100)
+        time.sleep(MOTOR_WIND_LENGTH - 1.5)
+        k.off(1)
+        # rotate to the left
+        move(True, False, -100, 3.9)
+        # wind down
+        k.motor(1, 100)
+        time.sleep(MOTOR_WIND_LENGTH - 0.8)
+        k.off(1)
+        # level magazine
+        delta_time_move(1, 570, 0.001)
+        # move forward
+        move(True, True, 100, 1.75)
+        # close grabber
+        delta_time_move(0, 1560, 0.001)
+        # back up
+        move(True, True, -100, 2)
+        # wind up
+        k.motor(1, -100)
+        time.sleep(MOTOR_WIND_LENGTH - 1)
+        k.off(1)
+        # rotate to the right
+        move(True, False, 100, 3.9)
+        time.sleep(0.1)
+        move(True, True, -100, 0.5)
+        # wind down
+        k.motor(1, 100)
+        time.sleep(MOTOR_WIND_LENGTH - 1)
+        k.off(1)
+        # open grabbers
+        delta_time_move(0, 700, 0.001)
+        #! wind up DEBUG IG
+        k.motor(1, -100)
+        time.sleep(MOTOR_WIND_LENGTH - 1)
+        k.off(1)
+        
     # if targeted cup is index 0 take 2 as secondary cup
     pass
 
@@ -98,6 +160,7 @@ def detect_cup() -> int:
     return correct_cup  # cup index (from left to right)
 
 # Todo: Cable-Managment, Check for invalid parts
+MOTOR_WIND_LENGTH = 4.75  # 4.75 standard
 if __name__ == "__main__":
     # Setup: Winding String must be 34cm long at start
     delta_time_move(1, 1560, 0.001)
@@ -109,13 +172,9 @@ if __name__ == "__main__":
             k.set_servo_position(0, 1840)
             cup_index = detect_cup()
             time.sleep(1) #! DEBUGs
-            motor_wind_length = 4.75  # 4.75 standard
-            starting_sequence(motor_wind_length)
+            starting_sequence(MOTOR_WIND_LENGTH)
             k.set_servo_position(0, 1000)
             time.sleep(2)
             grab_cups(cup_index)
-            k.motor(1, -100)
-            time.sleep(motor_wind_length)
-            k.off(1)
             break
         # time.sleep(0.1)
