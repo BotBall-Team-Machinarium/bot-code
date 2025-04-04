@@ -1,13 +1,12 @@
 #!/usr/bin/python3
-import os, sys, time
+import os, sys, time, threading
 sys.path.append("/usr/lib")
 import kipr as k
 
 # CONSTANTS
 LEFT_SENSOR = 0
 RIGHT_SENSOR = 1
-LEFT_BACK_SENSOR = 2
-RIGHT_BACK_SENSOR = 3
+START_LIGHT = 9
 LEFT_MOTOR = 0
 RIGHT_MOTOR = 1
 # At 0 the arm is horizontal, at 1100 it is vertical, at 1700 it is touching the controller
@@ -20,9 +19,6 @@ FORK_SERVO = 2
 # Brightness normalization thresholds
 WHITE_THRESHOLD = 220
 BLACK_THRESHOLD = 3000
-
-# Line following constants
-MOTOR_STRENGTH = 100
 
 def normalize_brightness(brightness: int) -> float:
    """
@@ -76,7 +72,7 @@ def line_sense(brightness_left: float, brightness_right: float, normalize: bool 
 
    return centerity
 
-def line_follow(left_sensor_index: int = LEFT_SENSOR, right_sensor_index: int = RIGHT_SENSOR, speed: int = MOTOR_STRENGTH):
+def line_follow(left_sensor_index: int = LEFT_SENSOR, right_sensor_index: int = RIGHT_SENSOR, speed: int = 100):
    val_l = k.analog(left_sensor_index)
    val_r = k.analog(right_sensor_index)
 
@@ -743,9 +739,35 @@ def make_space():
       time.sleep(0.001)
       seconds += 0.001
 
-def main():
+def off(wait_time: float = 0):
+   # This function stops all actions of the robot after wait_time, and is meant to be called to end the game
+
+   time.sleep(wait_time)
+
+   print(f"Turning off, {wait_time} s passed!")
+
+   # Turn off motors
+   k.ao()
+   # Turn off servos
+   k.disable_servos()
+
+def routine():
+   # This is the function meant to be run during the game
+
+   # Wait for starting light
+   print("Awaiting starting light...")
+   while k.digital(START_LIGHT) == 0:
+      time.sleep(0.00000001)
+   print("Starting light received!")
+   
+   # Create and start timer for stopping the robot on time
+   timer = threading.Thread(target=off, kwargs={"wait_time": 119})
+   timer.start()
+
+   # Enable servos, signaling game start
    k.enable_servos()
 
+   # Execute game plan
    start_to_bottles()
    grab_bottles()
    bottles_to_beverages()
@@ -755,6 +777,9 @@ def main():
    ice_to_beverages()
    ice_cups()
    make_space()
+
+def main():
+   routine()
 
 if __name__ == "__main__":
    main()
