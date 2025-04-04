@@ -1,8 +1,11 @@
 import sys
 sys.path.append("/usr/lib")
 import kipr as k
+import threading
+import subprocess
 import time
 import utils
+import os
 
 k.enable_servos()
 
@@ -57,10 +60,10 @@ def shake_it_baby() -> None:
 def starting_sequence(motor_down_wind: float = 3) -> None:
     delta_time_move(1, 830, 0.0005)  # make magazine beautifully positioned
     k.motor(0, -10)
-    time.sleep(2.25) # time winding down
+    time.sleep(3) # time winding down
     k.off(0)
     k.motor(1, 100)
-    time.sleep(motor_down_wind - 0.425)  #* CRITICAL
+    time.sleep(motor_down_wind - 1.5)  #* CRITICAL
     k.off(1)
 
 def fill_cups_test() -> None:
@@ -218,6 +221,21 @@ def detect_cup() -> int:
 
     return correct_cup  # cup index (from left to right)
 
+def off(wait_time: float = 0):
+    time.sleep(wait_time)
+    print(f"Turning off, {wait_time} s passed!")
+    code = """
+import sys
+sys.path.append("/usr/lib")
+import kipr as k
+import time
+time.sleep(0.01)
+k.ao()
+k.disable_servos()
+    """
+    subprocess.run(['python3', '-c', code])
+    os._exit(0)
+
 # Todo: Cable-Managment, Check for invalid parts
 # Setup: Winding String must be 34cm long at start
 MOTOR_WIND_LENGTH = 4.75  # 4.75 standard
@@ -225,6 +243,8 @@ if __name__ == "__main__":
     # delta_time_move(1, 1560, 0.001)  #! DEBUG
     while k.digital(9) == 0:
         time.sleep(0.001)
+    timer = threading.Thread(target=off, kwargs={"wait_time": 3})
+    timer.start()
     k.enable_servos()
     k.set_servo_position(0, 1840)
     cup_index = detect_cup()
