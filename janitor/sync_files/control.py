@@ -76,15 +76,15 @@ def line_sense(brightness_left: float, brightness_right: float, normalize: bool 
 
    return centerity
 
-def line_follow(left_sensor_index: int = LEFT_SENSOR, right_sensor_index: int = RIGHT_SENSOR):
+def line_follow(left_sensor_index: int = LEFT_SENSOR, right_sensor_index: int = RIGHT_SENSOR, speed: int = MOTOR_STRENGTH):
    val_l = k.analog(left_sensor_index)
    val_r = k.analog(right_sensor_index)
 
    centerity = line_sense(val_l, val_r, normalize=True)
 
    influence = max(min(centerity, 1), -1)
-   l_control = round((1 + influence) * MOTOR_STRENGTH)
-   r_control = round((1 - influence) * MOTOR_STRENGTH)
+   l_control = round((1 + influence) * speed)
+   r_control = round((1 - influence) * speed)
 
    k.motor(LEFT_MOTOR, l_control)
    k.motor(RIGHT_MOTOR, r_control)
@@ -327,15 +327,25 @@ def ice_to_bottles():
 def grab_bottles():
    # It is assumed that this routine starts when the robot is in line with the bottles, hugging the opposing wall, with the fork up in a resting position
 
-   # Get a bit of distance from the bottles
-   k.motor(LEFT_MOTOR, 29)
-   k.motor(RIGHT_MOTOR, 30)
-   time.sleep(0.2)
+   # Fork up
+   k.set_servo_position(FORK_SERVO, 1200)
+
+   # Hug wall to get straight
+   k.motor(LEFT_MOTOR, -47)
+   k.motor(RIGHT_MOTOR, -50)
+   time.sleep(2)
+   k.motor(LEFT_MOTOR, 0)
+   k.motor(RIGHT_MOTOR, 0)
+
+   # Get distance from the bottles
+   k.motor(LEFT_MOTOR, 47)
+   k.motor(RIGHT_MOTOR, 50)
+   time.sleep(1.7)
    k.motor(LEFT_MOTOR, 0)
    k.motor(RIGHT_MOTOR, 0)
    
    # Angle fork
-   k.set_servo_position(FORK_SERVO, 480)
+   k.set_servo_position(FORK_SERVO, 465)
 
    # Move shovel out of the way
    k.set_servo_position(TOOL_SERVO, 1550)
@@ -345,9 +355,9 @@ def grab_bottles():
    time.sleep(1)
 
    # Drive fork into bottles slowly
-   k.motor(LEFT_MOTOR, -29)
-   k.motor(RIGHT_MOTOR, -30)
-   time.sleep(3)
+   k.motor(LEFT_MOTOR, -20)
+   k.motor(RIGHT_MOTOR, -21)
+   time.sleep(5)
    k.motor(LEFT_MOTOR, 0)
    k.motor(RIGHT_MOTOR, 0)
 
@@ -536,33 +546,38 @@ def start_to_bottles():
    
    # Follow middle line to center cross
    while True:
-      line_follow()
       if normalize_brightness(k.analog(LEFT_SENSOR)) == 1 and normalize_brightness(k.analog(RIGHT_SENSOR)) == 1:
+         k.motor(LEFT_MOTOR, 0)
+         k.motor(RIGHT_MOTOR, 0)
          break
-   while normalize_brightness(k.analog(LEFT_SENSOR)) == 1 and normalize_brightness(k.analog(RIGHT_SENSOR)) == 1:
-      time.sleep(0.00000001)
+      else:
+         line_follow(speed=80)
    while True:
-      line_follow()
       if normalize_brightness(k.analog(LEFT_SENSOR)) == 1 and normalize_brightness(k.analog(RIGHT_SENSOR)) == 1:
+         k.motor(LEFT_MOTOR, 0)
+         k.motor(RIGHT_MOTOR, 0)
          break
-   
-   # Gradually drive backwards
-   for i in range(10):
-      k.motor(LEFT_MOTOR, i * -10)
-      k.motor(RIGHT_MOTOR, i * -10)
-      time.sleep(0.05)
+      else:
+         line_follow(speed=80)
+
+   # Equalize unstraightness
+   k.motor(LEFT_MOTOR, 100)
+   k.motor(RIGHT_MOTOR, -95)
+   time.sleep(0.05)
+   k.motor(LEFT_MOTOR, 0)
+   k.motor(RIGHT_MOTOR, 0)
 
    # Backtrack to the bottles
    k.motor(LEFT_MOTOR, -100)
-   k.motor(RIGHT_MOTOR, -100)
-   time.sleep(0.95)
+   k.motor(RIGHT_MOTOR, -95)
+   time.sleep(1.25)
    k.motor(LEFT_MOTOR, 0)
    k.motor(RIGHT_MOTOR, 0)
 
    # Face fork to bottles
    k.motor(LEFT_MOTOR, 100)
-   k.motor(RIGHT_MOTOR, -100)
-   time.sleep(0.8)
+   k.motor(RIGHT_MOTOR, -95)
+   time.sleep(0.80)
    k.motor(LEFT_MOTOR, 0)
    k.motor(RIGHT_MOTOR, 0)
 
@@ -698,13 +713,13 @@ def ice_to_beverages():
 def main():
    k.enable_servos()
 
-   # start_to_bottles()
-   # grab_bottles()
-   # bottles_to_beverages()
-   # drop_bottles()
-   # beverages_to_ice()
-   # shovel_ice()                                                                                                                                                                                                                                                                                                    
-   # ice_to_beverages()
+   start_to_bottles()
+   grab_bottles()
+   bottles_to_beverages()
+   drop_bottles()
+   beverages_to_ice()
+   shovel_ice()                                                                                                                                                                                                                                                                                                    
+   ice_to_beverages()
    ice_cups()
 
 if __name__ == "__main__":
