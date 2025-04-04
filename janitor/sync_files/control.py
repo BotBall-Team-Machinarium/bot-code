@@ -808,11 +808,11 @@ def off(wait_time: float = 0, double: bool = True):
 def routine():
    # This is the function meant to be run during the game
 
-   # # Wait for starting light
-   # print("Awaiting starting light...")
-   # while k.digital(START_LIGHT) == 0:
-   #    time.sleep(0.00000001)
-   # print("Starting light received!")
+   # Wait for starting light
+   print("Awaiting starting light...")
+   while k.digital(START_LIGHT) == 0:
+      time.sleep(0.00000001)
+   print("Starting light received!")
    
    # Create and start timer for stopping the robot on time
    timer = threading.Thread(target=off, kwargs={"wait_time": 120})
@@ -821,17 +821,13 @@ def routine():
    # Enable servos, signaling game start
    k.enable_servos()
 
-   while True:
-      k.motor(LEFT_MOTOR, 30)
-      k.motor(RIGHT_MOTOR, 30)
-
    # Execute game plan
    start_to_bottles()
    grab_bottles()
    bottles_to_beverages()
    drop_bottles()
    beverages_to_ice()
-   shovel_ice()                                                                                                                                                                                                                                                                                                    
+   shovel_ice()
    ice_to_beverages()
    ice_cups()
    push_poms()
