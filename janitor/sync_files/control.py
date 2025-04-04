@@ -325,7 +325,7 @@ def ice_to_bottles():
    k.motor(RIGHT_MOTOR, 0)
 
 def grab_bottles():
-   # It is assumed that this routine starts when the robot is in line with the bottles, hugging the opposing wall, with the fork up in a resting position
+   # It is assumed that this routine starts when the robot is in line with the bottles, with the fork up in a resting position
 
    # Fork up
    k.set_servo_position(FORK_SERVO, 1200)
@@ -345,7 +345,7 @@ def grab_bottles():
    k.motor(RIGHT_MOTOR, 0)
    
    # Angle fork
-   k.set_servo_position(FORK_SERVO, 500)
+   k.set_servo_position(FORK_SERVO, 540)
 
    # Move shovel out of the way
    k.set_servo_position(TOOL_SERVO, 1550)
@@ -424,7 +424,7 @@ def drop_bottles():
    # Turn to face shovel to bottles
    k.motor(LEFT_MOTOR, 100)
    k.motor(RIGHT_MOTOR, -90)
-   time.sleep(1.55)
+   time.sleep(1.6)
    k.motor(LEFT_MOTOR, 0)
    k.motor(RIGHT_MOTOR, 0)
 
@@ -499,10 +499,14 @@ def ice_cups():
       time.sleep(0.1)
 
    # Shake to get ice poms out of the shovel
-   for i in range(100):
-      k.set_servo_position(ARM_SERVO, k.get_servo_position(ARM_SERVO) + 75)
+   for i in range(30):
+      # k.set_servo_position(ARM_SERVO, k.get_servo_position(ARM_SERVO) + 75)
+      k.motor(LEFT_MOTOR, 20)
+      k.motor(RIGHT_MOTOR, -20)
       time.sleep(0.1)
-      k.set_servo_position(ARM_SERVO, k.get_servo_position(ARM_SERVO) - 75)
+      # k.set_servo_position(ARM_SERVO, k.get_servo_position(ARM_SERVO) - 75)
+      k.motor(LEFT_MOTOR, -20)
+      k.motor(RIGHT_MOTOR, 20)
       time.sleep(0.1)
 
 def start_to_bottles():
@@ -568,7 +572,7 @@ def start_to_bottles():
 
    # Backtrack to the bottles
    k.motor(LEFT_MOTOR, -100)
-   k.motor(RIGHT_MOTOR, -95)
+   k.motor(RIGHT_MOTOR, -97)
    time.sleep(1.25)
    k.motor(LEFT_MOTOR, 0)
    k.motor(RIGHT_MOTOR, 0)
@@ -576,7 +580,7 @@ def start_to_bottles():
    # Face fork to bottles
    k.motor(LEFT_MOTOR, 100)
    k.motor(RIGHT_MOTOR, -95)
-   time.sleep(0.80)
+   time.sleep(0.82)
    k.motor(LEFT_MOTOR, 0)
    k.motor(RIGHT_MOTOR, 0)
 
@@ -600,7 +604,7 @@ def beverages_to_ice():
 
    # Follow middle line for some time
    seconds = 0
-   while seconds < 0.65:
+   while seconds < 0.7:
       line_follow()
       time.sleep(0.001)
       seconds += 0.001
