@@ -55,9 +55,9 @@ def shake_it_baby() -> None:
         time.sleep(0.1)
 
 def starting_sequence(motor_down_wind: float = 3) -> None:
-    # delta_time_move(1, 830, 0.0005)  # make magazine beautifully positioned
+    delta_time_move(1, 830, 0.0005)  # make magazine beautifully positioned
     k.motor(0, -10)
-    time.sleep(2.9)
+    time.sleep(2.25) # time winding down
     k.off(0)
     k.motor(1, 100)
     time.sleep(motor_down_wind - 0.425)  #* CRITICAL
@@ -96,11 +96,16 @@ def fill_cups() -> None:
     # delta_time_move(1, 820, 0.001) #! DEBUG
 
 def collect_drinkpods() -> None:
-    # *move forward
+    # move forward
     move(True, True, 100, 0.3) #! ACTIVATE
-    #* rotate to the left
+    # magazine up
+    delta_time_move(1, 925, 0.001)
+    # wait for assistant
+    print("wait for assistant ..")
+    time.sleep(10)
+    # rotate to the left
     move(False, True, 100, 3.3975) #! ACTIVATE
-    #* prepare magazine level
+    # prepare magazine level
     delta_time_move(1, 780, 0.0001)
     # close grabber
     delta_time_move(0, 1850, 0.001)
@@ -141,7 +146,10 @@ def grab_cups(correct_cup) -> None:
         time.sleep(MOTOR_WIND_LENGTH + 2)
         k.off(1)
         # level magazines
-        delta_time_move(1, 350, 0.001)
+        delta_time_move(1, 550, 0.001)
+        # wait for assistant
+        print("wait for assistant ..")
+        time.sleep(9.5)
         # rotate to the right
         move(True, False, 100, 4.005)
         time.sleep(0.1)
@@ -159,16 +167,18 @@ def grab_cups(correct_cup) -> None:
         delta_time_move(0, 700, 0.001)
         # wind up
         k.motor(1, -100)
-        time.sleep(MOTOR_WIND_LENGTH - 1.5)
+        time.sleep(MOTOR_WIND_LENGTH - 2)
         k.off(1)
+        # magazine up
+        delta_time_move(1, 700, 0.001)
         # rotate to the left
         move(True, False, -100, 4)
-        # wind down
-        k.motor(1, 100)
-        time.sleep(MOTOR_WIND_LENGTH - 0.8)
-        k.off(1)
         # level magazine
         delta_time_move(1, 570, 0.001)
+        # wind down
+        k.motor(1, 100)
+        time.sleep(MOTOR_WIND_LENGTH - 1.3)
+        k.off(1)
         # move forward
         move(True, True, 100, 2.2)
         # close grabber
@@ -190,7 +200,7 @@ def grab_cups(correct_cup) -> None:
         k.off(1)
         # open grabbers
         delta_time_move(0, 700, 0.001)
-        #! wind up DEBUG IG
+        # wind up
         k.motor(1, -100)
         time.sleep(MOTOR_WIND_LENGTH - 1)
         k.off(1)
@@ -212,19 +222,15 @@ def detect_cup() -> int:
 # Setup: Winding String must be 34cm long at start
 MOTOR_WIND_LENGTH = 4.75  # 4.75 standard
 if __name__ == "__main__":
-    delta_time_move(1, 1560, 0.001)
-    while True:
-        # * print("Light Signal:", k.analog(2))
-        # * if k.analog(2) <= 100:  # light starting signal
-            k.enable_servos()
-            k.set_servo_position(0, 1840)
-            cup_index = detect_cup()
-            time.sleep(1) #! DEBUGs
-            starting_sequence(MOTOR_WIND_LENGTH)
-            k.set_servo_position(0, 1000)
-            time.sleep(2)
-            grab_cups(cup_index)
-            collect_drinkpods()
-            fill_cups()
-            break
-        #* time.sleep(0.1)
+    # delta_time_move(1, 1560, 0.001)  #! DEBUG
+    while k.digital(9) == 0:
+        time.sleep(0.001)
+    k.enable_servos()
+    k.set_servo_position(0, 1840)
+    cup_index = detect_cup()
+    starting_sequence(MOTOR_WIND_LENGTH)
+    k.set_servo_position(0, 1000)
+    time.sleep(3)
+    grab_cups(cup_index)
+    collect_drinkpods()
+    fill_cups()
