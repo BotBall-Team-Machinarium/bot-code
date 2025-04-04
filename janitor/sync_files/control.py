@@ -321,17 +321,7 @@ def ice_to_bottles():
    k.motor(RIGHT_MOTOR, 0)
 
 def grab_bottles():
-   # It is assumed that this routine starts when the robot is in line with the bottles, with the fork up in a resting position
-
-   # Fork up
-   k.set_servo_position(FORK_SERVO, 1200)
-
-   # Hug wall to get straight
-   k.motor(LEFT_MOTOR, -47)
-   k.motor(RIGHT_MOTOR, -50)
-   time.sleep(2)
-   k.motor(LEFT_MOTOR, 0)
-   k.motor(RIGHT_MOTOR, 0)
+   # It is assumed that this routine starts when the robot is in line with the bottles, hugging the wall infront of the bottles, with the fork up in a resting position
 
    # Get distance from the bottles
    k.motor(LEFT_MOTOR, 47)
@@ -341,7 +331,7 @@ def grab_bottles():
    k.motor(RIGHT_MOTOR, 0)
    
    # Angle fork
-   k.set_servo_position(FORK_SERVO, 540)
+   k.set_servo_position(FORK_SERVO, 535)
 
    # Move shovel out of the way
    k.set_servo_position(TOOL_SERVO, 1550)
@@ -420,7 +410,7 @@ def drop_bottles():
    # Turn to face shovel to bottles
    k.motor(LEFT_MOTOR, 100)
    k.motor(RIGHT_MOTOR, -90)
-   time.sleep(1.6)
+   time.sleep(1.55)
    k.motor(LEFT_MOTOR, 0)
    k.motor(RIGHT_MOTOR, 0)
 
@@ -580,6 +570,16 @@ def start_to_bottles():
    k.motor(LEFT_MOTOR, 0)
    k.motor(RIGHT_MOTOR, 0)
 
+   # Fork up
+   k.set_servo_position(FORK_SERVO, 1200)
+
+   # Hug wall to get straight
+   k.motor(LEFT_MOTOR, -47)
+   k.motor(RIGHT_MOTOR, -50)
+   time.sleep(2)
+   k.motor(LEFT_MOTOR, 0)
+   k.motor(RIGHT_MOTOR, 0)
+
 def beverages_to_ice():
    # Drive from middle line infront of beverages to wall infront of ice
    ...
@@ -599,11 +599,11 @@ def beverages_to_ice():
    k.motor(RIGHT_MOTOR, 0)
 
    # Follow middle line for some time
-   seconds = 0
-   while seconds < 0.7:
+   follow_time = 0
+   while follow_time < 0.7:
       line_follow()
       time.sleep(0.001)
-      seconds += 0.001
+      follow_time += 0.001
    
    # Turn to drive to drinks & ice
    k.motor(LEFT_MOTOR, 100)
@@ -648,7 +648,7 @@ def ice_to_beverages():
    
    # Back off from ice poms
    k.motor(LEFT_MOTOR, -100)
-   k.motor(RIGHT_MOTOR, -100)
+   k.motor(RIGHT_MOTOR, -95)
    time.sleep(0.2)
    k.motor(LEFT_MOTOR, 0)
    k.motor(RIGHT_MOTOR, 0)
@@ -658,38 +658,38 @@ def ice_to_beverages():
 
    # Turn to main space
    k.motor(LEFT_MOTOR, -100)
-   k.motor(RIGHT_MOTOR, 90)
+   k.motor(RIGHT_MOTOR, 95)
    time.sleep(0.75)
    k.motor(LEFT_MOTOR, 0)
    k.motor(RIGHT_MOTOR, 0)
 
    # Drive to middle line and a bit further
    k.motor(LEFT_MOTOR, -100)
-   k.motor(RIGHT_MOTOR, -90)
+   k.motor(RIGHT_MOTOR, -95)
    wait_for_line()
    k.motor(LEFT_MOTOR, 0)
    k.motor(RIGHT_MOTOR, 0)
    
    # Correct overshoot
    k.motor(LEFT_MOTOR, 100)
-   k.motor(RIGHT_MOTOR, 90)
+   k.motor(RIGHT_MOTOR, 95)
    time.sleep(0.3)
    k.motor(LEFT_MOTOR, 0)
    k.motor(RIGHT_MOTOR, 0)
 
    # Turn to face along middle line
    k.motor(LEFT_MOTOR, 100)
-   k.motor(RIGHT_MOTOR, -90)
+   k.motor(RIGHT_MOTOR, -95)
    time.sleep(0.75)
    k.motor(LEFT_MOTOR, 0)
    k.motor(RIGHT_MOTOR, 0)
 
    # Drive along middle line
-   seconds = 0
-   while seconds < 0.6:
+   follow_time = 0
+   while follow_time < 0.6:
       line_follow()
       time.sleep(0.001)
-      seconds += 0.001
+      follow_time += 0.001
 
    # Turn to beverage station
    k.motor(LEFT_MOTOR, 100)
@@ -705,11 +705,11 @@ def ice_to_beverages():
    k.motor(LEFT_MOTOR, 0)
    k.motor(RIGHT_MOTOR, 0)
 
-def make_space():
-   # Back off from beverage station to make space for bartender
+def push_poms():
+   # Back off from beverage station to make space for bartender, and push poms to condiment station
    ...
 
-   # It is assumed that this routine starts right after the icing the cups
+   # It is assumed that this routine starts right after the icing the cups, with the robot infront of the beverage station
 
    # Back off to middle line
    k.motor(LEFT_MOTOR, -100)
@@ -721,23 +721,48 @@ def make_space():
    # Correct overshoot
    k.motor(LEFT_MOTOR, 100)
    k.motor(RIGHT_MOTOR, 100)
-   time.sleep(0.5)
+   time.sleep(0.3)
    k.motor(LEFT_MOTOR, 0)
    k.motor(RIGHT_MOTOR, 0)
 
    # Turn to face along middle line
    k.motor(LEFT_MOTOR, -100)
    k.motor(RIGHT_MOTOR, 100)
-   time.sleep(0.8)
+   time.sleep(0.7)
    k.motor(LEFT_MOTOR, 0)
    k.motor(RIGHT_MOTOR, 0)
 
-   # Drive along middle line
-   seconds = 0
-   while seconds < 3:
+   # Put shovel down
+   k.set_servo_position(ARM_SERVO, 800)
+   k.set_servo_position(TOOL_SERVO, 1800)
+
+   # Follow middle line over center cross
+   follow_time = 0
+   while follow_time < 1.5:
       line_follow()
       time.sleep(0.001)
-      seconds += 0.001
+      follow_time += 0.001
+   # Drive along middle line to right cross
+   while True:
+      line_follow()
+      if normalize_brightness(k.analog(LEFT_SENSOR)) == 1 and normalize_brightness(k.analog(RIGHT_SENSOR)) == 1:
+         break
+   k.motor(LEFT_MOTOR, 0)
+   k.motor(RIGHT_MOTOR, 0)
+
+   # Turn to face condiment station
+   k.motor(LEFT_MOTOR, 100)
+   k.motor(RIGHT_MOTOR, -100)
+   time.sleep(0.3)
+   k.motor(LEFT_MOTOR, 0)
+   k.motor(RIGHT_MOTOR, 0)
+
+   # Push poms into condiment station
+   k.motor(LEFT_MOTOR, 100)
+   k.motor(RIGHT_MOTOR, 100)
+   time.sleep(1)
+   k.motor(LEFT_MOTOR, 0)
+   k.motor(RIGHT_MOTOR, 0)
 
 def off(wait_time: float = 0):
    # This function stops all actions of the robot after wait_time, and is meant to be called to end the game
@@ -755,10 +780,10 @@ def routine():
    # This is the function meant to be run during the game
 
    # Wait for starting light
-   print("Awaiting starting light...")
-   while k.digital(START_LIGHT) == 0:
-      time.sleep(0.00000001)
-   print("Starting light received!")
+   # print("Awaiting starting light...")
+   # while k.digital(START_LIGHT) == 0:
+   #    time.sleep(0.00000001)
+   # print("Starting light received!")
    
    # Create and start timer for stopping the robot on time
    timer = threading.Thread(target=off, kwargs={"wait_time": 119})
@@ -776,7 +801,7 @@ def routine():
    shovel_ice()                                                                                                                                                                                                                                                                                                    
    ice_to_beverages()
    ice_cups()
-   make_space()
+   push_poms()
 
 def main():
    routine()
