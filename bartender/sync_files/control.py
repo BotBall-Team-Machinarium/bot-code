@@ -74,6 +74,28 @@ def collect_drinkpods_test() -> None:
     move(True, True, 50, 3.25)
     # move(True, True, -100, 3)
 
+def collect_drinkpods() -> None:
+    # close grabber
+    delta_time_move(0, 1850, 0.001)
+    # wind up
+    k.motor(1, 100)
+    time.sleep(MOTOR_WIND_LENGTH -0.5)
+    k.off(1)
+    # start moving
+    k.motor(3, 100)
+    k.motor(2, -100)
+    # level magazine
+    for i in range(6):
+        delta_time_move(1, 850, 0.0001)
+        time.sleep(0.25)
+        delta_time_move(1, 800, 0.0001)
+        time.sleep(0.25)
+    k.motor(3, -100)
+    k.motor(2, 100)
+    time.sleep(4)
+    k.off(3)
+    k.off(2)
+
 def grab_cups(correct_cup) -> None:
     # if targeted cup is index 2 take 0 as secondary cup
     # if targeted cup is index 1 take 0 as secondary cup
@@ -133,7 +155,8 @@ def grab_cups(correct_cup) -> None:
         # rotate to the right
         move(True, False, 100, 3.9)
         time.sleep(0.1)
-        move(True, True, -100, 0.5)
+        # back up
+        move(True, True, -100, 0.75)
         # wind down
         k.motor(1, 100)
         time.sleep(MOTOR_WIND_LENGTH - 1)
@@ -144,7 +167,6 @@ def grab_cups(correct_cup) -> None:
         k.motor(1, -100)
         time.sleep(MOTOR_WIND_LENGTH - 1)
         k.off(1)
-        
     # if targeted cup is index 0 take 2 as secondary cup
     pass
 
@@ -160,21 +182,21 @@ def detect_cup() -> int:
     return correct_cup  # cup index (from left to right)
 
 # Todo: Cable-Managment, Check for invalid parts
+# Setup: Winding String must be 34cm long at start
 MOTOR_WIND_LENGTH = 4.75  # 4.75 standard
 if __name__ == "__main__":
-    # Setup: Winding String must be 34cm long at start
-    delta_time_move(1, 1560, 0.001)
-    while True:
-        # print("Light Signal:", k.analog(2))
-        # if k.analog(2) <= 100:  # light starting signal
-            # time.sleep(1) #! DEBUG
-            k.enable_servos()
-            k.set_servo_position(0, 1840)
-            cup_index = detect_cup()
-            time.sleep(1) #! DEBUGs
-            starting_sequence(MOTOR_WIND_LENGTH)
-            k.set_servo_position(0, 1000)
-            time.sleep(2)
-            grab_cups(cup_index)
-            break
-        # time.sleep(0.1)
+    # delta_time_move(1, 1560, 0.001)
+    # while True:
+    #     # * print("Light Signal:", k.analog(2))
+    #     # * if k.analog(2) <= 100:  # light starting signal
+    #         k.enable_servos()
+    #         k.set_servo_position(0, 1840)
+    #         cup_index = detect_cup()
+    #         time.sleep(1) #! DEBUGs
+    #         starting_sequence(MOTOR_WIND_LENGTH)
+    #         k.set_servo_position(0, 1000)
+    #         time.sleep(2)
+    #         grab_cups(cup_index)
+    #         break
+    #     #* time.sleep(0.1)
+    collect_drinkpods()
