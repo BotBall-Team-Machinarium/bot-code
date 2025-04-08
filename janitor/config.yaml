@@ -1,6 +1,13 @@
 ssh:
-  hostname: 10.68.3.75
+  # etelti-iot
+  # hostname: 10.68.3.75
+  # Volkshaus
+  # hostname: 192.168.35.45
+  # HTL Wien West 2
+  # hostname: 10.0.0.27
+  # Wombat WiFi
+  hostname: 192.168.125.1
   username: kipr
-  password: botball
+  password: Help4You!
   
   path: /home/kipr/  # recommended

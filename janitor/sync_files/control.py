@@ -815,7 +815,7 @@ def routine():
    print("Starting light received!")
    
    # Create and start timer for stopping the robot on time
-   timer = threading.Thread(target=off, kwargs={"wait_time": 120})
+   timer = threading.Thread(target=off, kwargs={"wait_time": 119})
    timer.start()
 
    # Enable servos, signaling game start
