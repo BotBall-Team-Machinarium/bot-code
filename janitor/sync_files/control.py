@@ -6,8 +6,7 @@ import kipr as k
 # CONSTANTS
 LEFT_SENSOR = 0
 RIGHT_SENSOR = 1
-START_LIGHT = 5
-START_THRESH = 100
+START_LIGHT = 9
 LEFT_MOTOR = 0
 RIGHT_MOTOR = 1
 # At 0 the arm is horizontal, at 1100 it is vertical, at 1700 it is touching the controller
@@ -813,7 +812,7 @@ def routine():
 
    # Wait for starting light
    print("Awaiting starting light...")
-   while k.analog(START_LIGHT) > START_THRESH:
+   while k.digital(START_LIGHT) == 0:
       time.sleep(0.00000001)
    print("Starting light received!")
    
