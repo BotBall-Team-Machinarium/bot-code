@@ -58,7 +58,7 @@ def shake_it_baby() -> None:
         time.sleep(0.1)
 
 def starting_sequence(motor_down_wind: float = 3) -> None:
-    delta_time_move(1, 830, 0.0005)  # make magazine beautifully positioned
+    delta_time_move(1, 700, 0.0005)  # make magazine beautifully positioned
     k.motor(0, -10)
     time.sleep(3) # time winding down
     k.off(0)
@@ -109,7 +109,8 @@ def collect_drinkpods() -> None:
     # rotate to the left
     move(False, True, 100, 3.3975) #! ACTIVATE
     # prepare magazine level
-    delta_time_move(1, 780, 0.0001)
+    calib = -200
+    delta_time_move(1, 780 + calib, 0.0001)
     # close grabber
     delta_time_move(0, 1850, 0.001)
     # wind down
@@ -121,9 +122,9 @@ def collect_drinkpods() -> None:
     k.motor(2, -100)
     # level magazine
     for i in range(6):
-        delta_time_move(1, 800, 0.0001)
+        delta_time_move(1, 800 + calib, 0.0001)
         time.sleep(0.25)
-        delta_time_move(1, 760, 0.0001)
+        delta_time_move(1, 760 + calib, 0.0001)
         time.sleep(0.25)
     k.motor(3, -100)
     k.motor(2, 100)
@@ -149,7 +150,7 @@ def grab_cups(correct_cup) -> None:
         time.sleep(MOTOR_WIND_LENGTH + 2)
         k.off(1)
         # level magazines
-        delta_time_move(1, 550, 0.001)
+        delta_time_move(1, 550, 0.001)  # was 550 before
         # wait for assistant
         print("wait for assistant ..")
         time.sleep(9.5)
@@ -175,12 +176,12 @@ def grab_cups(correct_cup) -> None:
         # magazine up
         delta_time_move(1, 700, 0.001)
         # rotate to the left
-        move(True, False, -100, 4)
+        move(True, False, -100, 3.9)  #* 1st RUN: 4.0 before
         # level magazine
         delta_time_move(1, 570, 0.001)
         # wind down
         k.motor(1, 100)
-        time.sleep(MOTOR_WIND_LENGTH - 1.3)
+        time.sleep(MOTOR_WIND_LENGTH - 1.3 + 0.2)
         k.off(1)
         # move forward
         move(True, True, 100, 2.2)
@@ -193,7 +194,7 @@ def grab_cups(correct_cup) -> None:
         time.sleep(MOTOR_WIND_LENGTH - 1)
         k.off(1)
         # rotate to the right
-        move(True, False, 100, 3.91)
+        move(True, False, 100, 3.95)
         time.sleep(0.1)
         # back up
         move(True, True, -100, 0.75)
@@ -238,12 +239,13 @@ k.disable_servos()
 
 # Todo: Cable-Managment, Check for invalid parts
 # Setup: Winding String must be 34cm long at start
-MOTOR_WIND_LENGTH = 4.75  # 4.75 standard
+MOTOR_WIND_LENGTH = 4.75 + 1.45  # 4.75 standard
 if __name__ == "__main__":
     # delta_time_move(1, 1560, 0.001)  #! DEBUG
+    print("Waiting for light-signal..")
     while k.digital(9) == 0:
         time.sleep(0.001)
-    timer = threading.Thread(target=off, kwargs={"wait_time": 3})
+    timer = threading.Thread(target=off, kwargs={"wait_time": 119})
     timer.start()
     k.enable_servos()
     k.set_servo_position(0, 1840)
