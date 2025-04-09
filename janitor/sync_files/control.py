@@ -86,7 +86,7 @@ def line_follow(left_sensor_index: int = LEFT_SENSOR, right_sensor_index: int = 
    k.motor(RIGHT_MOTOR, r_control)
 
 def shovel_ice():
-   # It is assumed that this script starts when the bot is in front of the ice, with the fork horizontal behind the robot to avoid collisions
+   # It is assumed that this script starts when the bot is in front of the ice hugging the wall, with the fork horizontal behind the robot to avoid collisions
 
    # Initial positions
    k.set_servo_position(ARM_SERVO, 1100)
@@ -106,7 +106,7 @@ def shovel_ice():
 
       k.set_servo_position(TOOL_SERVO, 1750 - 50 * i)
 
-      k.set_servo_position(ARM_SERVO, 700 - 12 * i)
+      k.set_servo_position(ARM_SERVO, 700 - 25 * i)
 
       time.sleep(0.1)
 
@@ -115,7 +115,7 @@ def shovel_ice():
    # Second phase: Driveing backwards and angling the tool out
    for i in range(10):
       k.set_servo_position(TOOL_SERVO, 1250 - 80 * i)
-      k.set_servo_position(ARM_SERVO, 400 - 35 * i)
+      k.set_servo_position(ARM_SERVO, 450 - 40 * i)
       time.sleep(0.1)
    
    time.sleep(0.2)
@@ -324,14 +324,14 @@ def grab_bottles():
    # It is assumed that this routine starts when the robot is in line with the bottles, hugging the wall infront of the bottles, with the fork up in a resting position
 
    # Get distance from the bottles
-   k.motor(LEFT_MOTOR, 45)
+   k.motor(LEFT_MOTOR, 47)
    k.motor(RIGHT_MOTOR, 50)
    time.sleep(1.7)
    k.motor(LEFT_MOTOR, 0)
    k.motor(RIGHT_MOTOR, 0)
    
    # Angle fork
-   k.set_servo_position(FORK_SERVO, 530)
+   k.set_servo_position(FORK_SERVO, 545)
 
    time.sleep(0.5)
 
@@ -341,7 +341,7 @@ def grab_bottles():
 
    # Drive fork into bottles slowly
    k.motor(LEFT_MOTOR, -30)
-   k.motor(RIGHT_MOTOR, -32)
+   k.motor(RIGHT_MOTOR, -31)
    time.sleep(3)
    k.motor(LEFT_MOTOR, 0)
    k.motor(RIGHT_MOTOR, 0)
@@ -364,7 +364,7 @@ def bottles_to_beverages():
    # Drive towards beverage station
    k.motor(LEFT_MOTOR, -85)
    k.motor(RIGHT_MOTOR, -100)
-   time.sleep(1.3)
+   time.sleep(1.35)
    k.motor(LEFT_MOTOR, 0)
    k.motor(RIGHT_MOTOR, 0)
 
@@ -392,7 +392,7 @@ def drop_bottles():
    time.sleep(0.5)
 
    # Drive away from beverage station to middle line
-   k.motor(LEFT_MOTOR, 43)
+   k.motor(LEFT_MOTOR, 45)
    k.motor(RIGHT_MOTOR, 50)
    time.sleep(2)
    k.motor(LEFT_MOTOR, 0)
@@ -403,7 +403,7 @@ def drop_bottles():
 
    # Lower shovel, to push bottles
    k.set_servo_position(ARM_SERVO, 880)
-   k.set_servo_position(TOOL_SERVO, 1300)
+   k.set_servo_position(TOOL_SERVO, 1500)
 
    # Turn to face shovel to bottles
    k.motor(LEFT_MOTOR, 100)
@@ -413,7 +413,7 @@ def drop_bottles():
    k.motor(RIGHT_MOTOR, 0)
 
    # Drive forwards to push bottles and hug wall
-   k.motor(LEFT_MOTOR, 85)
+   k.motor(LEFT_MOTOR, 87)
    k.motor(RIGHT_MOTOR, 100)
    time.sleep(2.2)
    k.motor(LEFT_MOTOR, 0)
@@ -424,7 +424,7 @@ def drop_bottles():
    k.set_servo_position(TOOL_SERVO, 2000)
 
    # Back off
-   k.motor(LEFT_MOTOR, -85)
+   k.motor(LEFT_MOTOR, -87)
    k.motor(RIGHT_MOTOR, -100)
    time.sleep(1)
    k.motor(LEFT_MOTOR, 0)
@@ -479,7 +479,7 @@ def ice_cups():
 
    # Lower shovel to cups
    for i in range(10):
-      k.set_servo_position(ARM_SERVO, 1650 - i * 60)
+      k.set_servo_position(ARM_SERVO, 1650 - i * 58)
       time.sleep(0.1)
 
    # Shake to get ice poms out of the shovel
@@ -593,7 +593,7 @@ def beverages_to_ice():
 
    # Follow middle line for some time
    follow_time = 0
-   while follow_time < 0.85:
+   while follow_time < 0.87:
       line_follow()
       time.sleep(0.001)
       follow_time += 0.001
@@ -601,14 +601,14 @@ def beverages_to_ice():
    # Turn to drive to drinks & ice
    k.motor(LEFT_MOTOR, 100)
    k.motor(RIGHT_MOTOR, -100)
-   time.sleep(0.8)
+   time.sleep(0.82)
    k.motor(LEFT_MOTOR, 0)
    k.motor(RIGHT_MOTOR, 0)
 
    # Drive to drinks & ice
    k.motor(LEFT_MOTOR, 85)
    k.motor(RIGHT_MOTOR, 100)
-   time.sleep(2.2)
+   time.sleep(2.35)
    k.motor(LEFT_MOTOR, 0)
    k.motor(RIGHT_MOTOR, 0)
 
@@ -618,14 +618,14 @@ def beverages_to_ice():
    # Turn towards ice
    k.motor(LEFT_MOTOR, 100)
    k.motor(RIGHT_MOTOR, -100)
-   time.sleep(0.75)
+   time.sleep(0.77)
    k.motor(LEFT_MOTOR, 0)
    k.motor(RIGHT_MOTOR, 0)
 
    # Hug wall to get straight
    k.motor(LEFT_MOTOR, 85)
    k.motor(RIGHT_MOTOR, 100)
-   time.sleep(1)
+   time.sleep(1.5)
    k.motor(LEFT_MOTOR, 0)
    k.motor(RIGHT_MOTOR, 0)
 
@@ -666,7 +666,7 @@ def ice_to_beverages():
    # Turn around for better mobility
    k.motor(LEFT_MOTOR, 100)
    k.motor(RIGHT_MOTOR, -95)
-   time.sleep(1.6)
+   time.sleep(1.65)
    k.motor(LEFT_MOTOR, 0)
    k.motor(RIGHT_MOTOR, 0)
 
@@ -831,8 +831,25 @@ def routine():
    ice_cups()
    push_poms()
 
+def test():
+   k.enable_servos()
+
+   # Initial positions
+   k.set_servo_position(ARM_SERVO, 1800)
+   k.set_servo_position(TOOL_SERVO, 2000)
+   k.set_servo_position(FORK_SERVO, 1500)
+
+   time.sleep(3)
+
+   # Functions/routines to test
+   grab_bottles()
+   # time.sleep(1)
+   # drop_bottles()
+
 def main():
-   routine()
+   # routine()
+
+   test()
 
 if __name__ == "__main__":
    main()
