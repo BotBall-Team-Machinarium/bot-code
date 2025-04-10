@@ -391,42 +391,28 @@ def drop_bottles():
       time.sleep(0.1)
    time.sleep(0.5)
 
-   # Drive away from beverage station to middle line
+   # Drive away from beverage station
    k.motor(LEFT_MOTOR, 45)
    k.motor(RIGHT_MOTOR, 50)
    time.sleep(2)
    k.motor(LEFT_MOTOR, 0)
    k.motor(RIGHT_MOTOR, 0)
-   
-   # Put fork away
-   k.set_servo_position(FORK_SERVO, 1500)
 
-   # Lower shovel, to push bottles
-   k.set_servo_position(ARM_SERVO, 880)
-   k.set_servo_position(TOOL_SERVO, 1500)
+   # Lower fork to push bottles
+   k.set_servo_position(FORK_SERVO, 400)
 
-   # Turn to face shovel to bottles
-   k.motor(LEFT_MOTOR, 100)
-   k.motor(RIGHT_MOTOR, -90)
-   time.sleep(1.7)
+   # Push bottles back
+   k.motor(LEFT_MOTOR, -45)
+   k.motor(RIGHT_MOTOR, -50)
+   time.sleep(1.2)
    k.motor(LEFT_MOTOR, 0)
    k.motor(RIGHT_MOTOR, 0)
 
-   # Drive forwards to push bottles and hug wall
-   k.motor(LEFT_MOTOR, 87)
+   # Drive to middle line
+   k.motor(LEFT_MOTOR, 95)
    k.motor(RIGHT_MOTOR, 100)
-   time.sleep(2.2)
-   k.motor(LEFT_MOTOR, 0)
-   k.motor(RIGHT_MOTOR, 0)
-
-   # Lift shovel again
-   k.set_servo_position(ARM_SERVO, 1800)
-   k.set_servo_position(TOOL_SERVO, 2000)
-
-   # Back off
-   k.motor(LEFT_MOTOR, -87)
-   k.motor(RIGHT_MOTOR, -100)
-   time.sleep(1)
+   wait_for_line()
+   time.sleep(0.5)
    k.motor(LEFT_MOTOR, 0)
    k.motor(RIGHT_MOTOR, 0)
 
@@ -577,7 +563,7 @@ def beverages_to_ice():
    # Drive from middle line infront of beverages to wall infront of ice
    ...
 
-   # It is assumed that this routine starts right after the robot dropped the bottles into the beverage station, with it now standing on the middle line normal to it
+   # It is assumed that this routine starts right after the robot dropped the bottles into the beverage station, with it now standing on the middle line normal to it, with its front on the middle line
 
    # Return tools to resting position
    k.set_servo_position(ARM_SERVO, 1800)
@@ -585,8 +571,8 @@ def beverages_to_ice():
    k.set_servo_position(FORK_SERVO, 1600)
 
    # Turn to face along the middle line
-   k.motor(LEFT_MOTOR, 100)
-   k.motor(RIGHT_MOTOR, -100)
+   k.motor(LEFT_MOTOR, -100)
+   k.motor(RIGHT_MOTOR, 100)
    time.sleep(0.9)
    k.motor(LEFT_MOTOR, 0)
    k.motor(RIGHT_MOTOR, 0)
@@ -843,13 +829,13 @@ def test():
 
    # Functions/routines to test
    grab_bottles()
-   # time.sleep(1)
-   # drop_bottles()
+   time.sleep(1)
+   drop_bottles()
 
 def main():
-   routine()
+   # routine()
 
-   # test()
+   test()
 
 if __name__ == "__main__":
    main()
