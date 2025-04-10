@@ -409,8 +409,8 @@ def drop_bottles():
    k.motor(RIGHT_MOTOR, 0)
 
    # Drive to middle line
-   k.motor(LEFT_MOTOR, 95)
-   k.motor(RIGHT_MOTOR, 100)
+   k.motor(LEFT_MOTOR, -95)
+   k.motor(RIGHT_MOTOR, -100)
    wait_for_line()
    time.sleep(0.5)
    k.motor(LEFT_MOTOR, 0)
@@ -527,24 +527,24 @@ def start_to_bottles():
          break
       else:
          line_follow(speed=80)
-
-   # Equalize unstraightness
-   k.motor(LEFT_MOTOR, 100)
-   k.motor(RIGHT_MOTOR, -95)
-   time.sleep(0.05)
+   
+   # Turn around to line-follow back to bottles
+   k.motor(LEFT_MOTOR, -100)
+   k.motor(RIGHT_MOTOR, 100)
+   time.sleep(1.4)
    k.motor(LEFT_MOTOR, 0)
    k.motor(RIGHT_MOTOR, 0)
 
-   # Backtrack to the bottles
-   k.motor(LEFT_MOTOR, -85)
-   k.motor(RIGHT_MOTOR, -97)
-   time.sleep(1.25)
-   k.motor(LEFT_MOTOR, 0)
-   k.motor(RIGHT_MOTOR, 0)
+   # Follow line back to bottles
+   follow_time = 0
+   while follow_time < 0.77:
+      line_follow(speed=50)
+      time.sleep(0.001)
+      follow_time += 0.001
 
    # Face fork to bottles
-   k.motor(LEFT_MOTOR, 100)
-   k.motor(RIGHT_MOTOR, -95)
+   k.motor(LEFT_MOTOR, -100)
+   k.motor(RIGHT_MOTOR, 100)
    time.sleep(0.82)
    k.motor(LEFT_MOTOR, 0)
    k.motor(RIGHT_MOTOR, 0)
@@ -833,7 +833,7 @@ def test():
    drop_bottles()
 
 def main():
-   # routine()
+   routine()
 
    test()
 
