@@ -408,9 +408,18 @@ def drop_bottles():
    k.motor(LEFT_MOTOR, 0)
    k.motor(RIGHT_MOTOR, 0)
 
+   k.set_servo_position(FORK_SERVO, 1100)
+
+   # Push bottles back
+   k.motor(LEFT_MOTOR, -45)
+   k.motor(RIGHT_MOTOR, -50)
+   time.sleep(1.2)
+   k.motor(LEFT_MOTOR, 0)
+   k.motor(RIGHT_MOTOR, 0)
+
    # Drive to middle line
-   k.motor(LEFT_MOTOR, -95)
-   k.motor(RIGHT_MOTOR, -100)
+   k.motor(LEFT_MOTOR, 95)
+   k.motor(RIGHT_MOTOR, 100)
    wait_for_line()
    time.sleep(0.5)
    k.motor(LEFT_MOTOR, 0)
@@ -594,7 +603,7 @@ def beverages_to_ice():
    # Drive to drinks & ice
    k.motor(LEFT_MOTOR, 85)
    k.motor(RIGHT_MOTOR, 100)
-   time.sleep(2.35)
+   time.sleep(2.4)
    k.motor(LEFT_MOTOR, 0)
    k.motor(RIGHT_MOTOR, 0)
 
@@ -689,7 +698,7 @@ def ice_to_beverages():
 
    # Drive along middle line
    follow_time = 0
-   while follow_time < 0.4:
+   while follow_time < 0.5:
       line_follow()
       time.sleep(0.001)
       follow_time += 0.001
@@ -754,8 +763,8 @@ def push_poms():
    k.motor(RIGHT_MOTOR, 0)
 
    # Turn to face condiment station
-   k.motor(LEFT_MOTOR, 100)
-   k.motor(RIGHT_MOTOR, -100)
+   k.motor(LEFT_MOTOR, -100)
+   k.motor(RIGHT_MOTOR, 100)
    time.sleep(0.3)
    k.motor(LEFT_MOTOR, 0)
    k.motor(RIGHT_MOTOR, 0)
@@ -815,6 +824,7 @@ def routine():
    shovel_ice()
    ice_to_beverages()
    ice_cups()
+   # TODO: Wait for Bartender to pass might be necessary
    push_poms()
 
 def test():
@@ -835,7 +845,7 @@ def test():
 def main():
    routine()
 
-   test()
+   # test()
 
 if __name__ == "__main__":
    main()
